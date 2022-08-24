@@ -1,5 +1,5 @@
 .. image:: https://img.shields.io/pypi/v/django-import-export-celery.svg
-   :target: https://pypi.org/manage/project/django-import-export-celery/releases/
+   :target: https://pypi.org/project/django-import-export-celery/#history
 
 django-import-export-celery: process slow django imports and exports in celery
 ==============================================================================
@@ -121,7 +121,18 @@ As with imports, a fully configured example project can be found in the `example
                 create_export_job_action,
             )
 
-3. Done!
+3. To customise export queryset you need to add `get_export_queryset` to the `ModelResource`.
+    ::
+
+        class WinnersResource(ModelResource):
+            class Meta:
+                model = Winner
+
+            def get_export_queryset(self):
+                """To customise the queryset of the model resource with annotation override"""
+                return self.Meta.model.objects.annotate(device_type=Subquery(FCMDevice.objects.filter(
+                        user=OuterRef("pk")).values("type")[:1])
+4. Done!
 
 Performing exports with celery
 ------------------------------
@@ -137,6 +148,20 @@ Performing exports with celery
 5. You will receive an email when the export is done, click on the link in the email
 
 6. Click on the link near the bottom of the page titled `Exported file`.
+
+For developers of this library
+------------------------------
+
+You can enter a preconfigured dev environment by first running `make` and then launching `./develop.sh` to get into a docker compose environment packed with **redis**, **celery**, **postgres** and everything you need to run and test django-import-export-celery.
+
+Before submitting a PR please run `flake8` and (in the examples directory) `python3 manange.py test`.
+
+Please note, that you need to restart celery for changes to propogate to the workers. Do this with `docker-compose down celery`, `docker-compose up celery`.
+
+Comercial support
+-----------------
+
+Comercial support is provided by `gradesta s.r.o <https://gradesta.com/support/>`_.
 
 Credits
 -------

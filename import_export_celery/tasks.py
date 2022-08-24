@@ -10,11 +10,8 @@ from django.core.cache import cache
 from django.core.mail import send_mail
 
 from django.urls import reverse
-try:
-    from django.utils.encoding import force_str
-except ImportError:
-    from django.utils.encoding import force_text as force_str
-from django.utils.translation import gettext as _
+from django.utils.encoding import force_str
+from django.utils.translation import gettext_lazy as _
 
 from import_export.formats.base_formats import DEFAULT_FORMATS
 
